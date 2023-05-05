@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   # Redwood API
-  api:
+  api-serve:
     image: redwoodjs-project/api:latest
     build:
       context: ./
@@ -16,8 +16,8 @@ services:
       - .env
 
   # Redwood Web
-  web:
-    image: redwoodjs-project/web:latest
+  web-serve:
+    image: redwoodjs-project/web-serve:latest
     build:
       context: ./
       dockerfile: ./web/Dockerfile
@@ -25,7 +25,7 @@ services:
     ports:
       - "8910:8910"
     depends_on:
-      - api
+      - api-serve
 
   # Postgres DB
   db:

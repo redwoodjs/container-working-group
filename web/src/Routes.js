@@ -35,15 +35,15 @@ const Routes = () => {
         <Route path="/posts" page={PostPostsPage} name="posts" />
       </Set>
       <Set wrap={BlogLayout}>
-        <Route path="/waterfall/{id:Int}" page={WaterfallPage} name="waterfall" />
+        <Route path="/waterfall/{id:Int}" page={WaterfallPage} name="waterfall" prerender />
         <Private unauthenticated="login">
           <Route path="/profile" page={ProfilePage} name="profile" />
         </Private>
         <Route path="/blog-post/{id:Int}" page={BlogPostPage} name="blogPost" />
-        <Route path="/contact" page={ContactUsPage} name="contactUs" />
-        <Route path="/about" page={AboutPage} name="about" />
-        <Route path="/" page={HomePage} name="home" />
-        <Route notfound page={NotFoundPage} />
+        <Route path="/contact" page={ContactUsPage} name="contactUs" prerender />
+        <Route path="/about" page={AboutPage} name="about" prerender />
+        <Route path="/" page={HomePage} name="home" prerender />
+        <Route notfound page={NotFoundPage} prerender />
       </Set>
     </Router>
   )

@@ -1,7 +1,7 @@
 #
-# Build
+# Base
 #
-FROM node:18 as build
+FROM node:18 as base
 
 RUN yarn cache clean
 
@@ -20,18 +20,23 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn rw build web
+#
+# Build
+#
+FROM base as build
+
+ENTRYPOINT [ "/bin/sh", "-c", "yarn rw build web" ]
 
 #
 # Test
 #
-FROM build as test
+FROM base as test
 
-RUN yarn rw test web
+ENTRYPOINT [ "/bin/sh", "-c", "yarn rw test web --no-watch" ]
 
 #
 # Serve
 #
-FROM build as serve
+FROM base as serve
 
-CMD ["yarn", "rw", "serve", "web", "--apiHost", "http://api:8911"]
+CMD yarn rw build web && yarn rw serve web --apiHost http://api-serve:8911

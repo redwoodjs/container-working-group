@@ -1,7 +1,7 @@
 #
-# Build
+# Base
 #
-FROM node:18 as build
+FROM node:18 as base
 
 RUN yarn cache clean
 
@@ -20,19 +20,23 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn rw generate types
-RUN yarn rw build api
+#
+# Build
+#
+FROM base as build
+
+ENTRYPOINT [ "/bin/sh", "-c", "yarn rw build api" ]
 
 #
 # Test
 #
-FROM build as test
+FROM base as test
 
-RUN yarn rw test api
+ENTRYPOINT [ "/bin/sh", "-c", "yarn rw test api --no-watch" ]
 
 #
 # Serve
 #
-FROM build as serve
+FROM base as serve
 
-CMD ["yarn", "rw", "serve", "api"]
+CMD yarn rw build api && yarn rw serve api
