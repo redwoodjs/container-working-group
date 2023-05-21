@@ -1,0 +1,59 @@
+# This workflow uses the excellent work done in the redwoodjs/docker repo
+# (https://github.com/redwoodjs/docker/blob/main/.github/workflows/template.yml)
+# as a starting point.
+
+name: 'ci'
+
+on:
+  push
+
+# Cancel in-progress runs of this workflow.
+# See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-only-cancel-in-progress-jobs-or-runs-for-the-current-workflow.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: 🏗 Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: .github/actions/set-up-job
+
+      - name: 🐳 docker build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          context: .
+          # TODO: figure out how to dynamically build
+          # file: Dockerfiles/...
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/docker-${{ matrix.platform }}:latest
+            ghcr.io/${{ github.repository_owner }}/docker-${{ matrix.platform }}:${{ github.sha }}
+
+  analyze:
+    name: Analyze
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [api, web]
+      fail-fast: false
+
+    steps:
+      - uses: .github/actions/set-up-job
+
+      - name: Install dive
+        run: |
+          wget https://github.com/wagoodman/dive/releases/download/v0.10.0/dive_0.10.0_linux_amd64.deb
+          sudo apt install ./dive_0.10.0_linux_amd64.deb
+
+      - name: 🤿 Run dive
+        run: |
+          CI=true dive ghcr.io/${{ github.repository_owner }}/docker-${{ env.IMAGE_PREFIX }}-${{ matrix.platform }}-${{ env.RUNTIME_ENV }}:${{ github.sha }}
+
+      - name: Get image size
+        run: |
+          docker images | egrep '^.*SIZE|docker\-.*'
