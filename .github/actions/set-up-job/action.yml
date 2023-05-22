@@ -1,0 +1,14 @@
+name: 🧶 Set up job
+
+description: Sets up the runner for building and analyzing docker images
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v3
+    - uses: docker/setup-buildx-action@v2
+    - uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+        password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
