@@ -10,4 +10,4 @@ docker build \
 
 SIZE=$(docker images --format json "$TAG" | jq .Size)
 
-echo "Size: $SIZE"
+echo "|$TAG|$SIZE|"
