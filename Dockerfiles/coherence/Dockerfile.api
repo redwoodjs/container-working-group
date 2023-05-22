@@ -1,18 +1,18 @@
-FROM node:18-alpine
+FROM node:18
 
 RUN yarn cache clean
 
-RUN mkdir /app
 WORKDIR /app
 
-COPY package.json .
-COPY api/package.json ./api/package.json
-
-COPY yarn.lock .
 COPY .yarn .yarn
-COPY .yarnrc.yml .yarnrc.yml
+COPY .yarnrc.yml .
+
+COPY package.json yarn.lock .
+
+COPY api/package.json ./api/
 
 RUN yarn install
+
 COPY . .
 
 RUN yarn rw build api
