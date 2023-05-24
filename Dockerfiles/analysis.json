@@ -1,0 +1,27 @@
+{
+  "coherence": {
+    "serve": {
+      "api": {
+        "buildMemory": 49012000,
+        "buildTime": 47970,
+        "imageSize": 1987722759
+      }
+    }
+  },
+  "unoptimized": {
+    "build": {
+      "api": {
+        "buildMemory": 47696000,
+        "buildTime": 54070,
+        "imageSize": 1938553625
+      }
+    },
+    "serve": {
+      "api": {
+        "buildMemory": 51016000,
+        "buildTime": 57300,
+        "imageSize": 1938553673
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "unoptimized",
+  "targets": {
+    "build": {
+      "api": ["docker", "build", "-f", "./api/Dockerfile", "../../", "--target", "build", "-t", "rw-analyse-image", "--no-cache"]
+    },
+    "serve": {
+      "api": ["docker", "build", "-f", "./api/Dockerfile", "../../", "--target", "serve", "-t", "rw-analyse-image", "--no-cache"]
+    }
+  }
+}

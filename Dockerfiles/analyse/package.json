@@ -1,0 +1,16 @@
+{
+  "name": "analyse",
+  "packageManager": "yarn@3.5.1",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "analyse": "node index.js"
+  },
+  "dependencies": {
+    "execa": "7.1.1",
+    "pretty-bytes": "6.1.0",
+    "pretty-ms": "8.0.0"
+  }
+}
