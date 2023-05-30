@@ -16,3 +16,6 @@
   open = true
 [notifications]
   versionUpdates = ["latest"]
+
+[experimental.serverFile]
+	enabled = true
