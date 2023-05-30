@@ -1,0 +1,100 @@
+# Base, or "dependencies". Where we yarn install
+# ------------------------------------------------
+# -> slim, not alpine? https://snyk.io/blog/choosing-the-best-node-js-docker-image/
+FROM node:18-slim as base
+
+# -> more to do here, but for a @parcel/watcher build error
+# -> from https://github.com/nodejs/docker-node/issues/1385
+RUN apt-get update || : && apt-get install -y \
+    python3 \
+    build-essential
+
+# -> I've seen this in some Dockerfiles. why and why this early?
+RUN yarn cache clean
+
+WORKDIR /app
+
+# -> missing anything?
+# -> order? seems generally correct?
+COPY .yarn/releases .yarn/releases
+COPY .yarnrc.yml .yarnrc.yml
+COPY .yarn/plugins .yarn/plugins
+COPY package.json package.json
+COPY api/package.json api/package.json
+COPY web/package.json web/package.json
+COPY yarn.lock yarn.lock
+
+# -> Aditya explains here https://community.redwoodjs.com/t/dockerize-redwoodjs/2291/40
+# -> this can be changed by the user in .yarnrc.yml, so maybe we need a step to find it? `yarn config get cacheFolder`
+RUN --mount=type=cache,target=/root/.yarn/berry/cache \
+    --mount=type=cache,target=/root/.cache \
+    yarn install --immutable --inline-builds
+
+COPY redwood.toml .
+# -> this one... just for dev really?
+COPY graphql.config.js .
+
+# api build
+# ------------------------------------------------
+FROM base as api_build
+
+COPY api api
+# -> reasons to avoid yarn here? And do `./node_modules/.bin/rw build api` instead?
+# -> Josh has `ENTRYPOINT [ "/bin/sh", "-c", "yarn rw build api" ]` here instead of `RUN`. pros cons?
+RUN yarn rw build api
+
+# web build
+# ------------------------------------------------
+FROM base as web_build
+
+COPY web web
+RUN yarn rw build web --no-prerender
+
+# web prerender build
+# -> to prerender web, we need the api side and the database
+# -> better to just COPY api and `yarn rw build`?
+# ------------------------------------------------
+FROM api_build as web_prerender_build
+
+COPY web web
+RUN yarn rw build web
+
+# serve api
+# ------------------------------------------------
+FROM node:18-slim as serve_api
+
+# -> should we set this earlier?
+ENV NODE_ENV production
+
+WORKDIR /app
+
+COPY .yarn/releases .yarn/releases
+COPY .yarnrc.yml .yarnrc.yml
+COPY .yarn/plugins .yarn/plugins
+COPY api/package.json .
+COPY yarn.lock yarn.lock
+
+RUN --mount=type=cache,target=/root/.yarn/berry/cache \
+    --mount=type=cache,target=/root/.cache \
+    yarn workspaces focus api
+    # -> why add deps after installing?
+    # yarn install --inline-builds && yarn add react react-dom @redwoodjs/api-server @redwoodjs/internal prisma
+
+COPY redwood.toml .
+COPY graphql.config.js .
+
+COPY --from=api_build /app/api/dist /app/api/dist
+COPY --from=api_build /app/api/db /app/api/db
+COPY --from=api_build /app/node_modules/.prisma /app/node_modules/.prisma
+
+# -> need to `EXPOSE` ports?
+# -> reasons to avoid yarn here?
+CMD ["yarn", "rw-server"]
+
+# serve
+# ------------------------------------------------
+FROM serve_api as serve
+
+COPY --from=web_build /app/web/dist /app/web/dist
+
+CMD ["yarn", "rw-server"]
