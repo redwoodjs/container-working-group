@@ -1,4 +1,5 @@
 /*global console*/
+/*global process*/
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -7,6 +8,7 @@ import { URL } from 'node:url'
 import { execa } from 'execa'
 import prettyBytes from 'pretty-bytes'
 import prettyMilliseconds from 'pretty-ms'
+import parser from 'yargs-parser'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -16,6 +18,12 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const results = {}
 
 async function main() {
+  const argv = parser(process.argv.slice(2))
+
+  const useCache = argv['cache'] == true
+  const resetResults = argv['reset'] == true
+  const directoriesToUse = argv._
+
   const dockerDirectories = fs
     .readdirSync(path.join(__dirname, '..'))
     .filter((file) => {
@@ -28,6 +36,9 @@ async function main() {
       if (!fs.existsSync(path.join(__dirname, '..', file, 'build.json'))) {
         return false
       }
+      if (directoriesToUse.length > 0) {
+        return directoriesToUse.includes(file)
+      }
       return true
     })
 
@@ -35,8 +46,33 @@ async function main() {
     'Found the following directories with build.json files:',
     dockerDirectories
   )
+
   for (const dir of dockerDirectories) {
-    await analyseDockerfiles(dir)
+    await analyseDockerfiles(dir, useCache)
+  }
+
+  // Merge new results with old results
+  if (!resetResults) {
+    const oldResults = JSON.parse(
+      fs.readFileSync(path.join(__dirname, '..', 'analysis.json'), 'utf8')
+    )
+    for (const name of Object.keys(oldResults)) {
+      if (!results[name]) {
+        results[name] = oldResults[name]
+      } else {
+        for (const target of Object.keys(oldResults[name])) {
+          if (!results[name][target]) {
+            results[name][target] = oldResults[name][target]
+          } else {
+            for (const image of Object.keys(oldResults[name][target])) {
+              if (!results[name][target][image]) {
+                results[name][target][image] = oldResults[name][target][image]
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   // Write the results to a data file
@@ -46,10 +82,13 @@ async function main() {
     JSON.stringify(results, undefined, 2)
   )
   // Generate a report in markdown
-  await generateReportMarkdown()
+  await generateReportMarkdown({
+    cache: useCache,
+    reset: resetResults,
+  })
 }
 
-async function analyseDockerfiles(directory) {
+async function analyseDockerfiles(directory, useCache) {
   const buildJSON = JSON.parse(
     fs.readFileSync(path.join(__dirname, '..', directory, 'build.json'), 'utf8')
   )
@@ -70,6 +109,9 @@ async function analyseDockerfiles(directory) {
       // memory and time usage information
       console.log('\t ...building image...')
       const args = buildJSON.targets[buildTarget][imageName]
+      if (!useCache) {
+        args.push('--no-cache')
+      }
       const result = await execa('/usr/bin/time', ['-v', ...args], {
         cwd: path.join(__dirname, '..', directory),
       })
@@ -100,11 +142,14 @@ async function analyseDockerfiles(directory) {
   }
 }
 
-async function generateReportMarkdown() {
+async function generateReportMarkdown(options) {
   console.log('Generating report markdown...')
 
   let report = `# Dockerfile Analysis Report`
-  for (const name of Object.keys(results)) {
+  report += `\n\n**Generated:** ${new Date().toISOString()}`
+  report += `\n\n**Options:** --cache=${options['cache']}, --reset=${options['reset']}`
+
+  for (const name of Object.keys(results).sort()) {
     report += `\n\n## Version: "${name}"`
     for (const target of Object.keys(results[name])) {
       report += `\n\n### Target: "${target}"`

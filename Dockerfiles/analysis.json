@@ -1,26 +1,33 @@
 {
-  "coherence": {
+  "optimized": {
+    "build": {
+      "api": {
+        "buildMemory": 43008000,
+        "buildTime": 670,
+        "imageSize": 1938339798
+      }
+    },
     "serve": {
       "api": {
-        "buildMemory": 49012000,
-        "buildTime": 47970,
-        "imageSize": 1987722759
+        "buildMemory": 43968000,
+        "buildTime": 410,
+        "imageSize": 1938339798
       }
     }
   },
   "unoptimized": {
     "build": {
       "api": {
-        "buildMemory": 47696000,
-        "buildTime": 54070,
-        "imageSize": 1938553625
+        "buildMemory": 43776000,
+        "buildTime": 410,
+        "imageSize": 1938339798
       }
     },
     "serve": {
       "api": {
-        "buildMemory": 51016000,
-        "buildTime": 57300,
-        "imageSize": 1938553673
+        "buildMemory": 42432000,
+        "buildTime": 440,
+        "imageSize": 1938339798
       }
     }
   }

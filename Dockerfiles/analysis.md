@@ -1,6 +1,20 @@
 # Dockerfile Analysis Report
 
-## Version: "coherence"
+**Generated:** 2023-05-30T12:49:42.862Z
+
+**Options:** --cache=true, --reset=true
+
+## Version: "optimized"
+
+### Target: "build"
+
+#### Image: "api"
+
+| Metric | Value | Raw |
+| :----- | ----: | ----: |
+| Image Size | 1.94 GB | 1938339798 |
+| Build Time | 670ms | 670 |
+| Build Memory | 43 MB | 43008000 |
 
 ### Target: "serve"
 
@@ -8,9 +22,9 @@
 
 | Metric | Value | Raw |
 | :----- | ----: | ----: |
-| Image Size | 1.99 GB | 1987722759 |
-| Build Time | 47.9s | 47970 |
-| Build Memory | 49 MB | 49012000 |
+| Image Size | 1.94 GB | 1938339798 |
+| Build Time | 410ms | 410 |
+| Build Memory | 44 MB | 43968000 |
 
 ## Version: "unoptimized"
 
@@ -20,9 +34,9 @@
 
 | Metric | Value | Raw |
 | :----- | ----: | ----: |
-| Image Size | 1.94 GB | 1938553625 |
-| Build Time | 54s | 54070 |
-| Build Memory | 47.7 MB | 47696000 |
+| Image Size | 1.94 GB | 1938339798 |
+| Build Time | 410ms | 410 |
+| Build Memory | 43.8 MB | 43776000 |
 
 ### Target: "serve"
 
@@ -30,6 +44,6 @@
 
 | Metric | Value | Raw |
 | :----- | ----: | ----: |
-| Image Size | 1.94 GB | 1938553673 |
-| Build Time | 57.3s | 57300 |
-| Build Memory | 51 MB | 51016000 |
+| Image Size | 1.94 GB | 1938339798 |
+| Build Time | 440ms | 440 |
+| Build Memory | 42.4 MB | 42432000 |
