@@ -2,7 +2,7 @@
   "name": "coherence",
   "targets": {
     "serve": {
-      "api": ["docker", "build", "-f", "./Dockerfile.api", "../../", "-t", "rw-analyse-image", "--no-cache"]
+      "api": ["docker", "build", "-f", "./Dockerfile.api", "../../", "-t", "rw-analyse-image"]
     }
   }
 }
