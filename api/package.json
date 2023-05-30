@@ -5,6 +5,10 @@
   "dependencies": {
     "@redwoodjs/api": "5.2.3",
     "@redwoodjs/auth-dbauth-api": "5.2.3",
-    "@redwoodjs/graphql-server": "5.2.3"
+    "@redwoodjs/fastify": "5.2.3",
+    "@redwoodjs/graphql-server": "5.2.3",
+    "@redwoodjs/project-config": "5.2.3",
+    "chalk": "4.1.2",
+    "fastify": "4.17.0"
   }
 }
