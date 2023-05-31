@@ -40,6 +40,8 @@ services:
       - "8910:8910"
     depends_on:
       - api
+    # environment:
+    #   - API_HOST=http://api:8911
 
   # Postgres DB
   db:

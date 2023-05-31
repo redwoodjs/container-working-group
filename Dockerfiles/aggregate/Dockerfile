@@ -94,17 +94,17 @@ COPY --from=api_build /app/node_modules/.prisma /app/node_modules/.prisma
 # -> need to `EXPOSE` ports?
 # -> reasons to avoid yarn here?
 # CMD ["yarn", "rw-server"]
-CMD [ "node_modules/.bin/rw-server", "--port 8911" ]
+CMD [ "node_modules/.bin/rw-server", "api" ]
 
 # serve
 # ------------------------------------------------
 FROM serve_api as serve_web
 
-ENV API_HOST http://serve_api:8911
+ENV API_HOST http://api:8911
 
 COPY --from=web_build /app/web/dist /app/web/dist
 
 #CMD ["yarn", "rw-server"]
-CMD [ "node_modules/.bin/rw-server", "--port 8910" ]
+CMD [ "node_modules/.bin/rw-server", "web", "--apiHost ${API_HOST}"]
 
 # CMD yarn rw serve web --apiHost ${API_HOST}
