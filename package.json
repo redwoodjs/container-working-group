@@ -20,5 +20,12 @@
   "prisma": {
     "seed": "yarn rw exec seed"
   },
-  "packageManager": "yarn@3.5.1"
+  "packageManager": "yarn@3.5.1",
+  "scripts": {
+    "compose:aggregate:build": "docker compose -f Dockerfiles/aggregate/docker-compose.yml build",
+    "compose:aggregate:console": "docker compose -f Dockerfiles/aggregate/docker-compose.yml run --rm api /bin/bash",
+    "compose:aggregate:db-setup": "docker compose -f Dockerfiles/aggregate/docker-compose.yml build",
+    "compose:aggregate:down": "docker compose -f Dockerfiles/aggregate/docker-compose.yml down -v",
+    "compose:aggregate:run": "docker compose -f Dockerfiles/aggregate/docker-compose.yml build"
+  }
 }

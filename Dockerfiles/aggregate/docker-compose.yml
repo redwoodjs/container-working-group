@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  # Redwood API
+  api:
+    image: redwoodjs-project/api:latest
+    build:
+      context: ../../
+      dockerfile: ./Dockerfiles/aggregate/Dockerfile
+      target: serve_api
+    ports:
+      - "8911:8911"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://redwood:redwood@db:5432/redwood
+      - TEST_DATABASE_URL=postgresql://redwood:redwood@db:5432/redwood_test
+
+  # Redwood Web
+  web:
+    image: redwoodjs-project/web-serve:latest
+    build:
+      context: ../../
+      dockerfile: ./Dockerfiles/aggregate/Dockerfile
+      target: serve_web
+    ports:
+      - "8910:8910"
+    depends_on:
+      - api
+
+  # Postgres DB
+  db:
+    image: postgres:12.4-alpine
+    environment:
+      POSTGRES_USER: redwood
+      POSTGRES_PASSWORD: redwood
+      POSTGRES_DB: redwood
+    ports:
+      - "5432:5432"
+

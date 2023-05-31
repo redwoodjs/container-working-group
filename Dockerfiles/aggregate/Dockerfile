@@ -93,8 +93,12 @@ CMD ["yarn", "rw-server"]
 
 # serve
 # ------------------------------------------------
-FROM serve_api as serve
+FROM serve_api as serve_web
+
+ENV API_HOST http://api-serve:8911
 
 COPY --from=web_build /app/web/dist /app/web/dist
 
-CMD ["yarn", "rw-server"]
+# CMD ["yarn", "rw-server"]
+
+CMD yarn rw serve web --apiHost ${API_HOST}
