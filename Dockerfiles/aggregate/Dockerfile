@@ -57,7 +57,7 @@ RUN yarn rw build web --no-prerender
 FROM api_build as web_prerender_build
 
 COPY web web
-# RUN yarn rw build web
+RUN yarn rw build web
 
 # serve api
 # ------------------------------------------------
