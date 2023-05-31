@@ -26,6 +26,6 @@
     "compose:aggregate:console": "docker compose -f Dockerfiles/aggregate/docker-compose.yml run --rm console /bin/bash",
     "compose:aggregate:db-setup": "docker compose -f Dockerfiles/aggregate/docker-compose.yml build",
     "compose:aggregate:down": "docker compose -f Dockerfiles/aggregate/docker-compose.yml down -v",
-    "compose:aggregate:run": "docker compose -f Dockerfiles/aggregate/docker-compose.yml build"
+    "compose:aggregate:run": "docker compose -f Dockerfiles/aggregate/docker-compose.yml up"
   }
 }

@@ -74,9 +74,13 @@ COPY .yarn/plugins .yarn/plugins
 COPY api/package.json .
 COPY yarn.lock yarn.lock
 
-RUN --mount=type=cache,target=/root/.yarn/berry/cache \
-    --mount=type=cache,target=/root/.cache \
-    yarn workspaces focus api
+COPY --from=api_build /root/.yarn/berry/cache /root/.yarn/berry/cache
+COPY --from=api_build /root/.cache /root/.cache
+COPY --from=api_build /app/node_modules /app/node_modules
+
+# RUN --mount=type=cache,target=/root/.yarn/berry/cache \
+#     --mount=type=cache,target=/root/.cache \
+#     yarn workspaces focus api
     # -> why add deps after installing?
     # yarn install --inline-builds && yarn add react react-dom @redwoodjs/api-server @redwoodjs/internal prisma
 
@@ -89,16 +93,18 @@ COPY --from=api_build /app/node_modules/.prisma /app/node_modules/.prisma
 
 # -> need to `EXPOSE` ports?
 # -> reasons to avoid yarn here?
-CMD ["yarn", "rw-server"]
+# CMD ["yarn", "rw-server"]
+CMD [ "node_modules/.bin/rw-server", "--port 8911" ]
 
 # serve
 # ------------------------------------------------
 FROM serve_api as serve_web
 
-ENV API_HOST http://api-serve:8911
+ENV API_HOST http://serve_api:8911
 
 COPY --from=web_build /app/web/dist /app/web/dist
 
-CMD ["yarn", "rw-server"]
+#CMD ["yarn", "rw-server"]
+CMD [ "node_modules/.bin/rw-server", "--port 8910" ]
 
 # CMD yarn rw serve web --apiHost ${API_HOST}
