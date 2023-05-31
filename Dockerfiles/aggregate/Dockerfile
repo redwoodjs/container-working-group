@@ -57,7 +57,7 @@ RUN yarn rw build web --no-prerender
 FROM api_build as web_prerender_build
 
 COPY web web
-RUN yarn rw build web
+# RUN yarn rw build web
 
 # serve api
 # ------------------------------------------------
@@ -99,6 +99,6 @@ ENV API_HOST http://api-serve:8911
 
 COPY --from=web_build /app/web/dist /app/web/dist
 
-# CMD ["yarn", "rw-server"]
+CMD ["yarn", "rw-server"]
 
-CMD yarn rw serve web --apiHost ${API_HOST}
+# CMD yarn rw serve web --apiHost ${API_HOST}

@@ -1,6 +1,19 @@
 version: "3.8"
 
 services:
+  # # This builds the base container. Useful for a 'console' to debug things with
+  # console:
+  #   # we have to be root to share folders into the container, but if you're debugging
+  #   # an issue you should _not_ share the code and change this to docker to mimic production
+  #   user: root
+  #   build:
+  #     context: ../../
+  #     dockerfile: ./Dockerfiles/aggregate/Dockerfile
+  #     target: web_prerender_build
+  #   tmpfs:
+  #     - /tmp
+  #   command: "true"
+
   # Redwood API
   api:
     image: redwoodjs-project/api:latest
